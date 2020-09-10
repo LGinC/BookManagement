@@ -1,4 +1,4 @@
-﻿using System;
+﻿using JetBrains.Annotations;
 using Volo.Abp.Domain.Entities.Auditing;
 
 namespace BookManagement.Books
@@ -33,12 +33,18 @@ namespace BookManagement.Books
         /// </summary>
         public long BookCount { get; private set; }
 
-        public BookCategory(string name, string code, string icon, string location)
+        /// <summary>
+        /// 描述
+        /// </summary>
+        public string Description { get; private set; }
+
+        public BookCategory([NotNull]string name, [NotNull] string code, string icon, string location, string description)
         {
             Name = name;
             Code = code;
             Icon = icon;
             Location = location;
+            Description = description;
         }
 
         /// <summary>

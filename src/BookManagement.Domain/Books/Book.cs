@@ -1,4 +1,5 @@
 ﻿using BookManagement.Events;
+using JetBrains.Annotations;
 using Volo.Abp.Domain.Entities.Auditing;
 
 namespace BookManagement.Books
@@ -21,6 +22,11 @@ namespace BookManagement.Books
         /// 国际标准书号
         /// </summary>
         public string ISBN { get; private set; }
+
+        /// <summary>
+        /// 描述
+        /// </summary>
+        public string Description { get; private set; }
 
         /// <summary>
         /// 作者
@@ -53,10 +59,22 @@ namespace BookManagement.Books
         public int LentCount { get; private set; }
 
 
-        public Book(string name, string iSBN, string author, string publisher, string image, string languge, long categoryId, string categoryName, int quantity = 0)
+
+        public Book(
+            [NotNull] string name,
+            [NotNull] string iSBN,
+            string description,
+            [NotNull] string author,
+            string publisher,
+            string image,
+            string languge,
+            long categoryId,
+            string categoryName,
+            int quantity = 0)
         {
             Name = name;
             ISBN = iSBN;
+            Description = description;
             Author = author;
             Publisher = publisher;
             Image = image;

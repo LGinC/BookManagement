@@ -26,6 +26,7 @@ namespace BookManagement.Books
 
         public DateTime CreationTime { get; set; }
 
+
         public LendLog(LendState state, string remark)
         {
             State = state;

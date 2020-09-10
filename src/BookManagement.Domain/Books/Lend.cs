@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using Volo.Abp.Domain.Entities.Auditing;
 
@@ -54,9 +55,9 @@ namespace BookManagement.Books
         public TimeSpan OutOfDate(DateTime now) => State != LendState.Return ? ShouldReturnTime - now : TimeSpan.Zero;
 
         /// <summary>
-        /// 是否已续借
+        /// 续借次数
         /// </summary>
-        public bool IsRenewal { get; private set; }
+        public int RenewalCount { get; private set; }
 
         /// <summary>
         /// 借阅状态
@@ -68,7 +69,19 @@ namespace BookManagement.Books
         /// </summary>
         public ICollection<LendLog> Logs {get; private set; }
 
-        public Lend(long bookId, string bookName, int quantity, DateTime lendTime, DateTime shouldReturnTime, LendState state = LendState.Lend)
+        /// <summary>
+        /// 备注
+        /// </summary>
+        public string Remark { get; private set; }
+
+        public Lend(
+            long bookId,
+            [NotNull] string bookName,
+            int quantity,
+            DateTime lendTime,
+            DateTime shouldReturnTime,
+            LendState state = LendState.Lend,
+            string remark = null)
         {
             BookId = bookId;
             BookName = bookName;
@@ -76,10 +89,15 @@ namespace BookManagement.Books
             LendTime = lendTime;
             ShouldReturnTime = shouldReturnTime;
             State = state;
+            Remark = remark;
             Logs = new List<LendLog>();
         }
 
-
+        public Lend SetRemark([NotNull]string remark)
+        {
+            Remark = remark;
+            return this;
+        }
 
     }
 }

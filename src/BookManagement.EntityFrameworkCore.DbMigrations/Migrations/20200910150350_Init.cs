@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BookManagement.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -258,6 +258,60 @@ namespace BookManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BookCategories",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ExtraProperties = table.Column<string>(nullable: true),
+                    ConcurrencyStamp = table.Column<string>(maxLength: 40, nullable: true),
+                    CreationTime = table.Column<DateTime>(nullable: false),
+                    CreatorId = table.Column<Guid>(nullable: true),
+                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    Code = table.Column<string>(maxLength: 20, nullable: false),
+                    Icon = table.Column<string>(maxLength: 500, nullable: true),
+                    Location = table.Column<string>(maxLength: 200, nullable: true),
+                    BookCount = table.Column<long>(nullable: false),
+                    Description = table.Column<string>(maxLength: 200, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BookCategories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Books",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ExtraProperties = table.Column<string>(nullable: true),
+                    ConcurrencyStamp = table.Column<string>(maxLength: 40, nullable: true),
+                    CreationTime = table.Column<DateTime>(nullable: false),
+                    CreatorId = table.Column<Guid>(nullable: true),
+                    LastModificationTime = table.Column<DateTime>(nullable: true),
+                    LastModifierId = table.Column<Guid>(nullable: true),
+                    IsDeleted = table.Column<bool>(nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(nullable: true),
+                    DeletionTime = table.Column<DateTime>(nullable: true),
+                    CategoryId = table.Column<long>(nullable: false),
+                    CategoryName = table.Column<string>(maxLength: 100, nullable: false),
+                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    ISBN = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(maxLength: 200, nullable: true),
+                    Author = table.Column<string>(maxLength: 100, nullable: false),
+                    Publisher = table.Column<string>(maxLength: 100, nullable: true),
+                    Image = table.Column<string>(maxLength: 500, nullable: true),
+                    Languge = table.Column<string>(maxLength: 20, nullable: true),
+                    Quantity = table.Column<int>(nullable: false),
+                    LentCount = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Books", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "IdentityServerApiResources",
                 columns: table => new
                 {
@@ -406,6 +460,36 @@ namespace BookManagement.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_IdentityServerPersistedGrants", x => x.Key);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Lends",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ExtraProperties = table.Column<string>(nullable: true),
+                    ConcurrencyStamp = table.Column<string>(maxLength: 40, nullable: true),
+                    CreationTime = table.Column<DateTime>(nullable: false),
+                    CreatorId = table.Column<Guid>(nullable: true),
+                    LastModificationTime = table.Column<DateTime>(nullable: true),
+                    LastModifierId = table.Column<Guid>(nullable: true),
+                    IsDeleted = table.Column<bool>(nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(nullable: true),
+                    DeletionTime = table.Column<DateTime>(nullable: true),
+                    BookId = table.Column<long>(nullable: false),
+                    BookName = table.Column<string>(maxLength: 100, nullable: false),
+                    Quantity = table.Column<int>(nullable: false),
+                    LendTime = table.Column<DateTime>(nullable: false),
+                    ShouldReturnTime = table.Column<DateTime>(nullable: false),
+                    ReturnTime = table.Column<DateTime>(nullable: true),
+                    RenewalCount = table.Column<int>(nullable: false),
+                    State = table.Column<int>(nullable: false),
+                    Remark = table.Column<string>(maxLength: 500, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lends", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -888,6 +972,28 @@ namespace BookManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LendLogs",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    State = table.Column<int>(nullable: false),
+                    Remark = table.Column<string>(maxLength: 500, nullable: false),
+                    CreationTime = table.Column<DateTime>(nullable: false),
+                    LendId = table.Column<long>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LendLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LendLogs_Lends_LendId",
+                        column: x => x.LendId,
+                        principalTable: "Lends",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AbpEntityPropertyChanges",
                 columns: table => new
                 {
@@ -1105,6 +1211,11 @@ namespace BookManagement.Migrations
                 name: "IX_IdentityServerPersistedGrants_SubjectId_ClientId_Type",
                 table: "IdentityServerPersistedGrants",
                 columns: new[] { "SubjectId", "ClientId", "Type" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LendLogs_LendId",
+                table: "LendLogs",
+                column: "LendId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -1158,6 +1269,12 @@ namespace BookManagement.Migrations
                 name: "AbpUserTokens");
 
             migrationBuilder.DropTable(
+                name: "BookCategories");
+
+            migrationBuilder.DropTable(
+                name: "Books");
+
+            migrationBuilder.DropTable(
                 name: "IdentityServerApiClaims");
 
             migrationBuilder.DropTable(
@@ -1203,6 +1320,9 @@ namespace BookManagement.Migrations
                 name: "IdentityServerPersistedGrants");
 
             migrationBuilder.DropTable(
+                name: "LendLogs");
+
+            migrationBuilder.DropTable(
                 name: "AbpEntityChanges");
 
             migrationBuilder.DropTable(
@@ -1225,6 +1345,9 @@ namespace BookManagement.Migrations
 
             migrationBuilder.DropTable(
                 name: "IdentityServerIdentityResources");
+
+            migrationBuilder.DropTable(
+                name: "Lends");
 
             migrationBuilder.DropTable(
                 name: "AbpAuditLogs");

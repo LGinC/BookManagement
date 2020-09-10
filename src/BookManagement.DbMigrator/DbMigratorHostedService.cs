@@ -19,23 +19,21 @@ namespace BookManagement.DbMigrator
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            using (var application = AbpApplicationFactory.Create<BookManagementDbMigratorModule>(options =>
+            using var application = AbpApplicationFactory.Create<BookManagementDbMigratorModule>(options =>
             {
                 options.UseAutofac();
                 options.Services.AddLogging(c => c.AddSerilog());
-            }))
-            {
-                application.Initialize();
+            });
+            application.Initialize();
 
-                await application
-                    .ServiceProvider
-                    .GetRequiredService<BookManagementDbMigrationService>()
-                    .MigrateAsync();
+            await application
+                .ServiceProvider?
+                .GetRequiredService<BookManagementDbMigrationService>()
+                .MigrateAsync();
 
-                application.Shutdown();
+            application.Shutdown();
 
-                _hostApplicationLifetime.StopApplication();
-            }
+            _hostApplicationLifetime?.StopApplication();
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
